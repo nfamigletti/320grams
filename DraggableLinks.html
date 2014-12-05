@@ -210,12 +210,12 @@
                                                         { toArrow: "Standard", stroke: null })
                                         ),
                                 model: new go.GraphLinksModel([  // specify the contents of the Palette
-                                    { text: "Start", figure: "Circle", fill: "green" },
-                                    { text: "Step" },
-                                    { text: "DB", figure: "Database", fill: "lightgray" },
-                                    { text: "???", figure: "Diamond", fill: "lightskyblue" },
-                                    { text: "End", figure: "Circle", fill: "red" },
-                                    { text: "Comment", figure: "RoundedRectangle", fill: "lightyellow" }
+                                    //{ text: "Start", figure: "Circle", fill: "green" },
+                                    { text: "Entity" },
+                                    //{ text: "DB", figure: "Database", fill: "lightgray" },
+                                    { text: "Relation", figure: "Diamond", fill: "lightskyblue" },
+                                    //{ text: "End", figure: "Circle", fill: "red" },
+                                    //{ text: "Comment", figure: "RoundedRectangle", fill: "lightyellow" }
                                 ], [
                                     // the Palette also has a disconnected Link, which the user can drag-and-drop
                                     { points: new go.List(go.Point).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 40), new go.Point(60, 40)]) }
@@ -254,12 +254,73 @@
             var pos = myDiagram.model.modelData.position;
             if (pos) myDiagram.position = go.Point.parse(pos);
         }
+        function eval(){
+            var storedNodeArray = [
+                { text: "Entity" },
+                { text: "Relation", figure: "Diamond", fill: "lightskyblue" }
+            ];
+            var storedLinkDataArray = [ {"points":[240,36.3,240,46.3,240,77.1,240,77.1,240,107.9,240,117.9], from:-1, to:-2, fromPort:"B", toPort:"T"} ];
+           evalLength(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray, storedNodeArray, storedLinkDataArray);
+
+            //evalLength(nodeArray, linkArray, storedNodeArray, storedLinkArray);
+        }
+        function evalLength(nodeArray, linkArray, storedNodeArray, storedLinkArray){
+            if(nodeArray.length != storedNodeArray.length || linkArray.length != storedLinkArray.length){ //Too many or too few Links or Nodes
+                window.alert("Too Many/Too Few Nodes or Links");
+            }
+            else{
+                window.alert("Right Amount of Nodes and Links");
+                evalNode(nodeArray, linkArray, storedNodeArray, storedLinkArray);
+            }
+        }
+        function evalNode(nodeArray, linkArray, storedNodeArray, storedLinkArray){
+            var x = 0; //Index of Answer Nodes
+            var found = false; //Whether Answer Node is found in Student Diagram
+            var pass = true; //Whether or not the Answer Nodes are all found in Student Diagram
+            var discovered = [];
+            while(discovered.length < nodeArray.length){
+                discovered[discovered.length] = false;
+            }
+            while(x <= storedNodeArray.length-1){ //Iterate through Answer Nodes
+                var found = false; //Node not found yet
+                var storedName = storedNodeArray[x].text;
+                var storedFigure = storedNodeArray[x].figure; //Need also check if figure of Nodes match
+                var y = 0; //Index of Student Nodes
+                while(y <= nodeArray.length-1){ //Iterate through Student Nodes looking for Answer Nodes
+                    var studentName = nodeArray[y].text;
+                    if(storedName.toLowerCase() == studentName.toLowerCase()){ //If found, move on to next Answer Node
+                        if(storedFigure == nodeArray[y].figure){
+                            if(discovered[y] == false) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    y++;
+                }
+                if(y == nodeArray.length && found == false){ //If an Answer Node isn't found, need not continue
+                    pass = false;
+                    break;
+                }
+                x++;
+            }
+            if(pass == true){
+                window.alert("Nodes Match");
+                //evalLink(nodeArray, linkArray, storedNodeArray, storedLinkArray);
+            }
+            else{
+                window.alert("Nodes Do Not Match");
+            }
+        }
+        function evalLink(nodeArray, linkArray, storedNodeArray, storedLinkArray){
+
+        }
     </script>
 </head>
 <body onload="init()">
 <div id="sample">
     <div style="width:100%; white-space:nowrap;">
-    <span style="display: inline-block; vertical-align: top; padding: 5px; width:100px">
+    <span style="display: inline-block; vertical-align: top; padding: 5px; width:162px">
       <div id="myPalette" style="border: solid 1px gray; height: 720px"></div>
     </span>
 
@@ -269,6 +330,7 @@
     </div>
     <button id="SaveButton" onclick="save()">Save</button>
     <button onclick="load()">Load</button>
+    <button onclick="eval()">Evaluate</button>
     <textarea id="mySavedModel" style="width:100%;height:300px">
         { "class": "go.GraphLinksModel",
         "linkFromPortIdProperty": "fromPort",
