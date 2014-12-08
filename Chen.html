@@ -61,7 +61,7 @@
                             alignmentFocus: spot,  // just inside the Shape
                             portId: name,  // declare this object to be a "port"
                             fromSpot: spot, toSpot: spot,  // declare where links may connect at this port
-                            fromLinkable: output, toLinkable: input,  // declare whether the user may draw links to/from here
+                            //fromLinkable: output, toLinkable: input,  // declare whether the user may draw links to/from here
                             cursor: "pointer"  // show a different cursor to indicate potential link point
                         });
             }
@@ -161,18 +161,18 @@
                                     //{ toArrow: "Standard", stroke: null }),
 
                             //added this to make labels at ends of links, are editable
-                            $(go.TextBlock,"1/M",
+                            $(go.TextBlock,
                                             {segmentIndex: 0, segmentOffset: new go.Point(NaN,NaN),
                                                 segmentOrientation: go.Link.OrientUpright
                                                 //editable: true
                                                 },
                                                 new go.Binding("text", "fromText")),
-                            $(go.TextBlock,"1/M",
+                            $(go.TextBlock,
                                             {segmentIndex: -1, segmentOffset: new go.Point(NaN,NaN),
                                                 segmentOrientation: go.Link.OrientUpright
                                                 //editable: true
                                                 },
-                                                new go.Binding("text", "fromText"))
+                                                new go.Binding("text", "toText"))
                     );//end Link
             load();  // load an initial diagram from some JSON text
 
@@ -209,12 +209,12 @@
                                                 //$(go.Shape,  // the arrowhead
                                                         //{ toArrow: "Standard", stroke: null }),
                                                 //added this to make link labels in palette
-                                                $(go.TextBlock, "1/M",
+                                                $(go.TextBlock,
                                                         {segmentIndex: 0, segmentOffset: new go.Point(NaN,NaN),
                                                         segmentOrientation: go.Link.OrientUpright
                                                         },
                                                         new go.Binding("text, fromText")),
-                                                $(go.TextBlock, "1/M",
+                                                $(go.TextBlock,
                                                         {segmentIndex: -1, segmentOffset: new go.Point(NaN,NaN),
                                                         segmentOrientation: go.Link.OrientUpright},
                                                         new go.Binding("text", "toText"))
@@ -232,7 +232,13 @@
                                     // the Palette also has a disconnected Link, which the user can drag-and-drop
 
                                     //added simple line in palette
-                                    { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "1/M", toText: "1/M" }
+                                    { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "", toText: "N"},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "", toText: "1"},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "", toText: "M" },
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "N", toText: ""},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "1", toText: ""},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "M", toText: ""},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "", toText: "" }
                                 ])
                             });
         }

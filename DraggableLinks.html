@@ -328,7 +328,7 @@
                         z++;
                     }
                     z = 0;
-                    var storedToNode = storedLinkArray[x]; //The text of the Node to which the Link is going
+                    var storedToNode = storedLinkArray[x].to; //The text of the Node to which the Link is going
                     while (z <= storedNodeArray.length - 1) { //Finding this text
                         if (storedNodeArray[z].key == storedToNode) {
                             storedToNode = storedNodeArray[z].text;
