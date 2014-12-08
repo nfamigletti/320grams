@@ -250,6 +250,174 @@
             var pos = myDiagram.model.modelData.position;
             if (pos) myDiagram.position = go.Point.parse(pos);
         }
+        function eval(){
+            var storedNodeArray = [
+                { text: "Entity" },
+                { text: "Relation", figure: "Diamond", fill: "lightskyblue" }
+            ];
+            var storedLinkDataArray = [ {"points":[240,36.3,240,46.3,240,77.1,240,77.1,240,107.9,240,117.9], from:-1, to:-2, fromPort:"B", toPort:"T"} ];
+           evalLength(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray, storedNodeArray, storedLinkDataArray);
+        }
+        function evalLength(nodeArray, linkArray, storedNodeArray, storedLinkArray){
+            if(nodeArray.length != storedNodeArray.length || linkArray.length != storedLinkArray.length){ //Too many or too few Links or Nodes
+                window.alert("Too Many/Too Few Nodes or Links");
+            }
+            else{ //If pass, then move on to next layer of evaluation
+                window.alert("Right Amount of Nodes and Links");
+                evalNode(nodeArray, linkArray, storedNodeArray, storedLinkArray);
+            }
+        }
+        function evalNode(nodeArray, linkArray, storedNodeArray, storedLinkArray){
+            var x = 0; //Index of Answer Nodes
+            var found = false; //Whether Answer Node is found in Student Diagram
+            var pass = true; //Whether or not the Answer Nodes are all found in Student Diagram
+            var discovered = [];
+            while(discovered.length < nodeArray.length){ //No nodes have been visited yet
+                discovered[discovered.length] = false;
+            }
+            while(x <= storedNodeArray.length-1){ //Iterate through Answer Nodes
+                var found = false; //Node not found yet
+                var storedName = storedNodeArray[x].text;
+                var storedFigure = storedNodeArray[x].figure; //Need also check if figure of Nodes match
+                var y = 0; //Index of Student Nodes
+                while(y <= nodeArray.length-1){ //Iterate through Student Nodes looking for Answer Nodes
+                    var studentName = nodeArray[y].text;
+                    if(storedName.toLowerCase() == studentName.toLowerCase()){ //If found and not yet visited, move on to next Answer Node
+                        if(storedFigure == nodeArray[y].figure){
+                            if(discovered[y] == false) {
+                                discovered[y] = true;
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    y++;
+                }
+                if(y == nodeArray.length && found == false){ //If an Answer Node isn't found, need not continue
+                    pass = false;
+                    break;
+                }
+                x++;
+            }
+            if(pass == true){ //If all Nodes found, move on to next layer of evaluation
+                window.alert("Nodes Match");
+                //evalLink(nodeArray, linkArray, storedNodeArray, storedLinkArray);
+            }
+            else{
+                window.alert("Nodes Do Not Match");
+            }
+        }
+        function evalLink(nodeArray, linkArray, storedNodeArray, storedLinkArray){
+            var x = 0; //Index of Answer Links
+            var found = false; //Whether Answer Link is found in Student Diagram
+            var pass = true; //Whether or not the Answer Links are all found in Student Diagram
+            var discovered = [];
+            var z = 0;
+            while(discovered.length < linkArray.length){ //No Links have been visited
+                discovered[discovered.length] = false;
+            }
+            if(linkArray[0].category == "chen") { //Diagram is in Chen Style
+
+                while (x <= storedLinkArray.length - 1) { //Iterate through Answer Links
+                    var found = false; //Link not found yet
+                    var storedFromNode = storedLinkArray[x].from; //The text of the Node from which the Link comes from
+                    while (z <= storedNodeArray.length - 1) { //Finding this text
+                        if (storedNodeArray[z].key == storedFromNode) {
+                            storedFromNode = storedNodeArray[z].text;
+                        }
+                        z++;
+                    }
+                    z = 0;
+                    var storedToNode = storedLinkArray[x]; //The text of the Node to which the Link is going
+                    while (z <= storedNodeArray.length - 1) { //Finding this text
+                        if (storedNodeArray[z].key == storedToNode) {
+                            storedToNode = storedNodeArray[z].text;
+                        }
+                        z++;
+                    }
+                    z = 0;
+                    var storedFromText = storedLinkArray[x].fromText; //The text (cardinality) closest to the From Node
+                    var storedToText = storedLinkArray[x].toText; //The text (cardinality) closest to the To Node
+                    var y = 0; //Index of Student Links
+                    while (y <= linkArray.length - 1) { //Iterate through Student Links looking for Answer Links
+                        var studentFromNode = myDiagram.model.findNodeDataForKey(linkArray[y].from).text; //Getting the text of the Node from which the Student Link comes from
+                        var studentToNode = myDiagram.model.findNodeDataForKey(linkArray[y].to).text; //Getting the text of the Node to which the Student Link is going
+                        var studentFromText = linkArray[y].fromText; //The text (cardinality) closest to the Student From Node
+                        var studentToText = linkArray[y].toText; //The text (cardinality) closest to the Student To Node
+                        if (storedFromNode.toLowerCase() == studentFromNode.toLowerCase()) { //Check if From Node texts match
+                            if (storedToNode.toLowerCase() == studentToNode.toLowerCase()) { //Check if To Node texts match
+                                if (storedFromText == studentFromText && storedToText == studentToText) { //Check if cardinality texts match
+                                    if (discovered[y] == false) { //Check if Link has previously been visited
+                                        discovered[y] = true; //If not, mark as visited
+                                        found = true;
+                                        break; //Once found, need not keep searching
+                                    }
+                                }
+                            }
+                        }
+                        y++;
+                    }
+                    if (y == linkArray.length && found == false) { //If an Answer Link isn't found, need not continue
+                        pass = false;
+                        break;
+                    }
+                    x++;
+                }
+            }
+            else{ //Diagram is in Crow's Foot
+                while(x <= storedLinkArray.length-1){ //Iterate through Answer Links
+                    var found = false; //Link not found yet
+                    var storedFromNode = storedLinkArray[x].from; //The text of the Node from which the Link comes from
+                    while(z <= storedNodeArray.length-1){ //Retrieving this text
+                        if(storedNodeArray[z].key == storedFromNode){
+                            storedFromNode = storedNodeArray[z].text;
+                        }
+                        z++;
+                    }
+                    z = 0;
+                    var storedToNode = storedLinkArray[x].to; //The text of the Node to which the Link is going
+                    while(z <= storedNodeArray.length-1){ //Finding this text
+                        if(storedNodeArray[z].key == storedToNode){
+                            storedToNode = storedNodeArray[z].text;
+                        }
+                        z++;
+                    }
+                    z = 0;
+                    var storedFromArrow = storedLinkArray[x].fromArrow; //Arrowhead closest to the From Node
+                    var storedToArrow = storedLinkArray[x].toArrow; //Arrowhead closest to the To Node
+                    var y = 0; //Index of Student Links
+                    while(y <= linkArray.length-1){ //Iterate through Student Links looking for Answer Links
+                        var studentFromNode = myDiagram.model.findNodeDataForKey(linkArray[y].from).text; //Getting the text of the Node from which the Student Link comes from
+                        var studentToNode = myDiagram.model.findNodeDataForKey(linkArray[y].to).text; //Getting the text of the Node to which the Student Link is going
+                        var studentFromArrow = linkArray[y].fromArrow; //Student Arrowhead closest to the From Node
+                        var studentToArrow = linkArray[y].toArrow; //Student Arrowhead closest to the To Node
+                        if(storedFromNode.toLowerCase() == studentFromNode.toLowerCase()){ //Check if From Node texts match
+                            if(storedToNode.toLowerCase() == studentToNode.toLowerCase()){ //Check if To Node texts match
+                                if(storedFromArrow == studentFromArrow && storedToArrow == studentToText){ //Check if all Arrowheads match
+                                    if(discovered[y] == false) { //Check if this Link has previously been visited
+                                        discovered[y] = true; //If not, mark it as visited
+                                        found = true;
+                                        break; //Once found, need not keep searching
+                                    }
+                                }
+                            }
+                        }
+                        y++;
+                    }
+                    if(y == linkArray.length && found == false){ //If an Answer Link isn't found, need not continue
+                        pass = false;
+                        break;
+                    }
+                    x++;
+                }
+            }
+            if(pass == true){ //If all found, then Diagram is correct
+                window.alert("Links Match and Diagram Correct");
+            }
+            else{
+                window.alert("Links Do Not Match");
+            }
+        }
     </script>
 </head>
 <body onload="init()">
@@ -265,6 +433,7 @@
     </div>
     <button id="SaveButton" onclick="save()">Save</button>
     <button onclick="load()">Load</button>
+    <button onclick="eval()">Evaluate</button>
     <textarea id="mySavedModel" style="width:100%;height:300px">
         { "class": "go.GraphLinksModel",
         "linkFromPortIdProperty": "fromPort",
