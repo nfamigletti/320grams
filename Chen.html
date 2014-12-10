@@ -6,6 +6,11 @@
     <script id="code">
         function init() {
             var $ = go.GraphObject.make;  // for conciseness in defining templates
+            var bluegrad = $(go.Brush, go.Brush.Linear, { 0: "rgb(150, 150, 250)", 0.5: "rgb(86, 86, 186)", 1: "rgb(86, 86, 186)" });
+            var greengrad = $(go.Brush, go.Brush.Linear, { 0: "rgb(158, 209, 159)", 1: "rgb(67, 101, 56)" });
+            var redgrad = $(go.Brush, go.Brush.Linear, { 0: "rgb(206, 106, 100)", 1: "rgb(180, 56, 50)" });
+            var yellowgrad = $(go.Brush, go.Brush.Linear, { 0: "rgb(254, 221, 50)", 1: "rgb(254, 182, 50)" });
+            var lightgrad = $(go.Brush, go.Brush.Linear, { 1: "#E6E6FA", 0: "#FFFAF0" });
             myDiagram =
                     $(go.Diagram, "myDiagram",  // must name or refer to the DIV HTML element
                             {
@@ -161,12 +166,12 @@
                                     //{ toArrow: "Standard", stroke: null }),
 
                             //added this to make labels at ends of links, are editable
-                           /* $(go.TextBlock,
+                           $(go.TextBlock,
                                             {segmentIndex: 0, segmentOffset: new go.Point(NaN,NaN),
                                                 segmentOrientation: go.Link.OrientUpright
                                                 //editable: true
                                                 },
-                                                new go.Binding("text", "fromText")) */
+                                                new go.Binding("text", "fromText")),
                             $(go.TextBlock,
                                             {segmentIndex: -1, segmentOffset: new go.Point(NaN,NaN),
                                                 segmentOrientation: go.Link.OrientUpright
@@ -209,11 +214,12 @@
                                                 //$(go.Shape,  // the arrowhead
                                                         //{ toArrow: "Standard", stroke: null }),
                                                 //added this to make link labels in palette
-                                                /*$(go.TextBlock,
+                                                $(go.TextBlock,
                                                         {segmentIndex: 0, segmentOffset: new go.Point(NaN,NaN),
-                                                        segmentOrientation: go.Link.OrientUpright
+                                                            segmentOrientation: go.Link.OrientUpright
+                                                            //editable: true
                                                         },
-                                                        new go.Binding("text, fromText")), */
+                                                        new go.Binding("text", "fromText")),
                                                 $(go.TextBlock,
                                                         {segmentIndex: -1, segmentOffset: new go.Point(NaN,NaN),
                                                         segmentOrientation: go.Link.OrientUpright},
@@ -232,13 +238,13 @@
                                     // the Palette also has a disconnected Link, which the user can drag-and-drop
 
                                     //added simple line in palette
-                                    { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]),toText: "N"},
-                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), toText: "1"},
-                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), toText: "M" },
-                                    /*{points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), toText: ""},
-                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), toText: ""},
-                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), toText: ""}, */
-                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), toText: "" }
+                                    { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "", toText: "N"},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "", toText: "1"},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "", toText: "M" },
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "N", toText: ""},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "1", toText: ""},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "M", toText: ""},
+                                    {points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(120, 0)]), fromText: "", toText: "" }
                                 ])
                             });
         }
@@ -275,11 +281,14 @@
             if (pos) myDiagram.position = go.Point.parse(pos);
         }
         function eval(){
+            //Replace Stored Arrays with stored Instructor Answer data from Database
             var storedNodeArray = [
-                { key:-1, text: "Entity" },
+                { key:-1, text: "Entity1" },
                 { key:-2, text: "Relation", figure: "Diamond", fill: "lightskyblue" },
+                { key:-3, text: "Entity2"}
             ];
-            var storedLinkDataArray = [ {"points":[240,36.3,240,46.3,240,77.1,240,77.1,240,107.9,240,117.9], from:-1, to:-2, toText: "1", fromPort:"B", toPort:"T"} ];
+            var storedLinkDataArray = [ {"points":[240,36.3,240,46.3,240,77.1,240,77.1,240,107.9,240,117.9], from:-1, to:-2, fromText: "", toText: "1", fromPort:"B", toPort:"T"},
+                {"points":[240,36.3,240,46.3,240,77.1,240,77.1,240,107.9,240,117.9], from:-2, to:-3, fromText: "N", toText: "", fromPort:"B", toPort:"T"} ];
             evalLength(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray, storedNodeArray, storedLinkDataArray);
         }
         function evalLength(nodeArray, linkArray, storedNodeArray, storedLinkArray){
@@ -305,14 +314,16 @@
                 var storedFigure = storedNodeArray[x].figure; //Need also check if figure of Nodes match
                 var y = 0; //Index of Student Nodes
                 while(y <= nodeArray.length-1){ //Iterate through Student Nodes looking for Answer Nodes
+                    if(discovered[y] == true){ //If already visited, skip
+                        y++;
+                        continue;
+                    }
                     var studentName = nodeArray[y].text;
                     if(storedName.toLowerCase() == studentName.toLowerCase()){ //If found and not yet visited, move on to next Answer Node
                         if(storedFigure == nodeArray[y].figure){
-                            if(discovered[y] == false) {
                                 discovered[y] = true;
                                 found = true;
                                 break;
-                            }
                         }
                     }
                     y++;
@@ -340,8 +351,6 @@
             while(discovered.length < linkArray.length){ //No Links have been visited
                 discovered[discovered.length] = false;
             }
-            //if(linkArray[0].category == "chen") { //Diagram is in Chen Style
-
                 while (x <= storedLinkArray.length - 1) { //Iterate through Answer Links
                     var found = false; //Link not found yet
                     var storedFromNode = storedLinkArray[x].from; //The text of the Node from which the Link comes from
@@ -360,22 +369,33 @@
                         z++;
                     }
                     z = 0;
-                   // var storedFromText = storedLinkArray[x].fromText; //The text (cardinality) closest to the From Node
+                    var storedFromText = storedLinkArray[x].fromText; //The text (cardinality) closest to the From Node
                     var storedToText = storedLinkArray[x].toText; //The text (cardinality) closest to the To Node
                     var y = 0; //Index of Student Links
                     while (y <= linkArray.length - 1) { //Iterate through Student Links looking for Answer Links
+                        if(discovered[y] == true){ //If already visited, skip
+                            y++;
+                            continue;
+                        }
                         var studentFromNode = myDiagram.model.findNodeDataForKey(linkArray[y].from).text; //Getting the text of the Node from which the Student Link comes from
                         var studentToNode = myDiagram.model.findNodeDataForKey(linkArray[y].to).text; //Getting the text of the Node to which the Student Link is going
-                        //var studentFromText = linkArray[y].fromText; //The text (cardinality) closest to the Student From Node
+                        var studentFromText = linkArray[y].fromText; //The text (cardinality) closest to the Student From Node
                         var studentToText = linkArray[y].toText; //The text (cardinality) closest to the Student To Node
                         if (storedFromNode.toLowerCase() == studentFromNode.toLowerCase()) { //Check if From Node texts match
                             if (storedToNode.toLowerCase() == studentToNode.toLowerCase()) { //Check if To Node texts match
-                                if (storedToText == studentToText) { //Check if cardinality texts match
-                                    if (discovered[y] == false) { //Check if Link has previously been visited
+                                if (storedToText == studentToText && storedFromText == studentFromText) { //Check if cardinality texts match
                                         discovered[y] = true; //If not, mark as visited
                                         found = true;
                                         break; //Once found, need not keep searching
-                                    }
+                                }
+                            }
+                        }
+                        if (storedFromNode.toLowerCase() == studentToNode.toLowerCase()){ //Check for mirrored answers
+                            if(storedToNode.toLowerCase() == studentFromNode.toLowerCase()){
+                                if(storedToText == studentFromText && storedFromText == studentToText){
+                                    discovered[y] = true;
+                                    found = true;
+                                    break; //Once found, need not keep searching
                                 }
                             }
                         }
@@ -388,52 +408,7 @@
                     x++;
                 }
            /* }
-            else{ //Diagram is in Crow's Foot
-                while(x <= storedLinkArray.length-1){ //Iterate through Answer Links
-                    var found = false; //Link not found yet
-                    var storedFromNode = storedLinkArray[x].from; //The text of the Node from which the Link comes from
-                    while(z <= storedNodeArray.length-1){ //Retrieving this text
-                        if(storedNodeArray[z].key == storedFromNode){
-                            storedFromNode = storedNodeArray[z].text;
-                        }
-                        z++;
-                    }
-                    z = 0;
-                    var storedToNode = storedLinkArray[x].to; //The text of the Node to which the Link is going
-                    while(z <= storedNodeArray.length-1){ //Finding this text
-                        if(storedNodeArray[z].key == storedToNode){
-                            storedToNode = storedNodeArray[z].text;
-                        }
-                        z++;
-                    }
-                    z = 0;
-                    var storedFromArrow = storedLinkArray[x].fromArrow; //Arrowhead closest to the From Node
-                    var storedToArrow = storedLinkArray[x].toArrow; //Arrowhead closest to the To Node
-                    var y = 0; //Index of Student Links
-                    while(y <= linkArray.length-1){ //Iterate through Student Links looking for Answer Links
-                        var studentFromNode = myDiagram.model.findNodeDataForKey(linkArray[y].from).text; //Getting the text of the Node from which the Student Link comes from
-                        var studentToNode = myDiagram.model.findNodeDataForKey(linkArray[y].to).text; //Getting the text of the Node to which the Student Link is going
-                        var studentFromArrow = linkArray[y].fromArrow; //Student Arrowhead closest to the From Node
-                        var studentToArrow = linkArray[y].toArrow; //Student Arrowhead closest to the To Node
-                        if(storedFromNode.toLowerCase() == studentFromNode.toLowerCase()){ //Check if From Node texts match
-                            if(storedToNode.toLowerCase() == studentToNode.toLowerCase()){ //Check if To Node texts match
-                                if(storedFromArrow == studentFromArrow && storedToArrow == studentToText){ //Check if all Arrowheads match
-                                    if(discovered[y] == false) { //Check if this Link has previously been visited
-                                        discovered[y] = true; //If not, mark it as visited
-                                        found = true;
-                                        break; //Once found, need not keep searching
-                                    }
-                                }
-                            }
-                        }
-                        y++;
-                    }
-                    if(y == linkArray.length && found == false){ //If an Answer Link isn't found, need not continue
-                        pass = false;
-                        break;
-                    }
-                    x++;
-                }
+
             }*/
             if(pass == true){ //If all found, then Diagram is correct
                 window.alert("Links Match and Diagram Correct");
