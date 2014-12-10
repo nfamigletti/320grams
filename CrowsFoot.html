@@ -106,8 +106,7 @@
               portId: "", // the default port: if no spot on link data, use closest side
               fromLinkable: true, toLinkable: true, cursor: "pointer",
               fill: "white", // default color
-
-              //added ths to set size
+              //added this to set size
               width: 150, height: 100
             },
             new go.Binding("figure"),
@@ -157,15 +156,12 @@
         new go.Binding("points").makeTwoWay(),
         $(go.Shape,  // the link path shape
           { isPanelMain: true, strokeWidth: 2 }),
-
-        $(go.Shape,  // the arrowhead
-          //{ toArrow: "Standard", stroke: null }),
-          //customize link shape
-          //{ toArrow: "CircleLine" },
-          //{ fromArrow: "DoubleLine" }),
-          //{fromArrow: "BackwardCircleFork" }),
-          { fromArrow: "BackwardLineFork" }),
-
+        $(go.Shape,  
+          //added fromArrow binding
+          new go.Binding("fromArrow", "fromArrow")),
+        $(go.Shape,  
+          //added toArrow binding
+          new go.Binding("toArrow", "toArrow")),
         $(go.Panel, "Auto",
           new go.Binding("visible", "isSelected").ofObject(),
           $(go.Shape, "RoundedRectangle",  // the link shape
@@ -199,13 +195,12 @@
                     { locationSpot: go.Spot.Center },
                     $(go.Shape,
                       { isPanelMain: true, fill: null, stroke: "deepskyblue", strokeWidth: 0 }),
-                    $(go.Shape,  // the arrowhead
-                      //{ toArrow: "Standard", stroke: null })
-                      //change link shape
-                      //{ toArrow: "CircleLine" },
-                      //{ fromArrow: "DoubleLine" })
-                      //{ fromArrow: "BackwardCircleFork" })
-                      {fromArrow: "BackwardLineFork" })
+                    $(go.Shape, // the arrowhead
+                      //added fromArrow binding
+                      new go.Binding("fromArrow","fromArrow")),
+                    $(go.Shape,
+                      //added toArrow binding
+                      new go.Binding("toArrow","toArrow"))
                   )
               },
               {
@@ -217,28 +212,28 @@
               new go.Binding("points"),
               $(go.Shape,  // the link path shape
                 { isPanelMain: true, strokeWidth: 2 }),
-              $(go.Shape,  // the arrowhead
-                //{ toArrow: "Standard", stroke: null })
-                //change link shape
-                //{ toArrow: "CircleLine" },
-                //{ fromArrow: "DoubleLine" })
-                //{ fromArrow: "BackwardCircleFork" })
-                {fromArrow: "BackwardLineFork" })
+              $(go.Shape, // the arrowhead
+                //added fromArrow binding
+                new go.Binding("fromArrow","fromArrow")),
+              $(go.Shape,                
+                //added toArrow binding
+                new go.Binding("toArrow","toArrow")) 
             ),
           model: new go.GraphLinksModel([  // specify the contents of the Palette
-            //{ text: "Start", figure: "Circle", fill: "green" },
-            //{ text: "Step" },
-            //{ text: "DB", figure: "Database", fill: "lightgray" },
-            //{ text: "???", figure: "Diamond", fill: "lightskyblue" },
-            //{ text: "End", figure: "Circle", fill: "red" },
-            //{ text: "Comment", figure: "RoundedRectangle", fill: "lightyellow" }
-
             //add Entity rectangle to Crows Foot style diagram
             { text: "Entity" }
-            
           ], [
             // the Palette also has a disconnected Link, which the user can drag-and-drop
-            { points: new go.List(go.Point).addAll([new go.Point(0, 0), new go.Point(30, 0), new go.Point(30, 40), new go.Point(60, 40)]) }
+            //added combinations of arrowhead shapes to support Crows Foot ER diagrams
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardFork", toArrow: "DoubleLine" },
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardCircleFork", toArrow: "DoubleLine" },
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardLineFork", toArrow: "CircleLine" },
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardCircleFork", toArrow: "CircleLine" },
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardCircleFork", toArrow: "CircleFork" },
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardLineFork", toArrow: "LineFork" },
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardCircleFork", toArrow: "LineFork" },
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "DoubleLine", toArrow: "CircleLine" },
+            { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "DoubleLine", toArrow: "DoubleLine" }
           ])
         });
   }
