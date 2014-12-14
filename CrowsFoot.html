@@ -225,7 +225,7 @@
                         ], [
                           // the Palette also has a disconnected Link, which the user can drag-and-drop
                           //added combinations of arrowhead shapes to support Crows Foot ER diagrams
-                          { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardFork", toArrow: "DoubleLine" },
+                          { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardLineFork", toArrow: "DoubleLine" },
                           { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardCircleFork", toArrow: "DoubleLine" },
                           { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardLineFork", toArrow: "CircleLine" },
                           { points: new go.List(go.Point).addAll([new go.Point(0,0), new go.Point(80,0)]), fromArrow: "BackwardCircleFork", toArrow: "CircleLine" },
@@ -275,7 +275,7 @@
         { key:-1, text: "Entity1" },
         { key:-2, text: "Entity2"}
       ];
-      var storedLinkDataArray = [ {"points":[240,36.3,240,46.3,240,77.1,240,77.1,240,107.9,240,117.9], from:-1, to:-2, fromArrow: "BackwardFork", toArrow: "DoubleLine", fromPort:"B", toPort:"T"}];
+      var storedLinkDataArray = [ {"points":[240,36.3,240,46.3,240,77.1,240,77.1,240,107.9,240,117.9], from:-1, to:-2, fromArrow: "BackwardLineFork", toArrow: "DoubleLine", fromPort:"B", toPort:"T"}];
       evalLength(myDiagram.model.nodeDataArray, myDiagram.model.linkDataArray, storedNodeArray, storedLinkDataArray);
     }
     function evalLength(nodeArray, linkArray, storedNodeArray, storedLinkArray){
